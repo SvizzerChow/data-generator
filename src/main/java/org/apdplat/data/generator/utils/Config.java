@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,11 @@ public class Config {
     private static final Map<String, String> CONFIG = new HashMap<>();
 
     static {
-        if(Files.exists(Paths.get("config.txt"))){
+        Path path = Paths.get("config.txt");
+        if (!Files.exists(path)){
+            path = Paths.get("src","main", "resources","config.txt");
+        }
+        if(Files.exists(path)){
             LOGGER.info("存在配置文件");
             try {
                 Files.readAllLines(Paths.get("config.txt")).forEach(line -> {
@@ -46,6 +51,8 @@ public class Config {
             }catch (Exception e){
                 LOGGER.error("读取配置文件异常", e);
             }
+        }else {
+            throw new RuntimeException(path.toString()+" 不存在");
         }
     }
 
